@@ -1,17 +1,24 @@
-// @ts-ignore
+// ListUsuarios.js
 import React, { useEffect, useState } from "react";
 import usuariosService from "../services/usuariosService";
 
 export const ListUsuarios = () => {
     const [usuarios, setUsuarios] = useState([]);
-    const [nuevoUsuario, setNuevoUsuario] = useState({ id: '', nombre: '', email: '', password: '' });
+    const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', email: '', password: '' });
+    const [error, setError] = useState(String);
 
     useEffect(() => {
-        usuariosService.getAllUsuarios().then(response => {
-            setUsuarios(response.data);
-        }).catch(error => {
-            console.log(error);
-        })
+        const fetchData = async () => {
+            try {
+                const response = await usuariosService.getAllUsuarios();
+                setUsuarios(response.data);
+            } catch (error) {
+                console.log(error);
+                setError("Error al obtener usuarios. Por favor, inténtalo de nuevo más tarde.");
+            }
+        };
+
+        fetchData();
     }, []);
 
     const handleInputChange = (e) => {
@@ -21,47 +28,45 @@ export const ListUsuarios = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!nuevoUsuario.nombre || !nuevoUsuario.email || !nuevoUsuario.password) {
+            setError("Por favor completa todos los campos.");
+            return;
+        }
+
         try {
             await usuariosService.addUsuario(nuevoUsuario);
             setUsuarios([...usuarios, nuevoUsuario]);
-            setNuevoUsuario({ id: '', nombre: '', email: '', password: '' });
+            setNuevoUsuario({ nombre: '', email: '', password: '' });
+            setError(String);
         } catch (error) {
-            console.error('Error al agregar usuario:', error);
+            setError(error.message);
         }
     };
 
     return (
         <div className="container">
-            <h2>Lista</h2>
+            {/* <h2>Lista</h2>
             <table className="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Password</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {usuarios.map(usuario =>
+                    {usuarios.map(usuario => (
                         <tr key={usuario.id}>
-                            <td>{usuario.id}</td>
                             <td>{usuario.nombre}</td>
+                            <td>{usuario.email}</td>
+                            <td>{usuario.password}</td>
                         </tr>
-                    )}
+                    ))}
                 </tbody>
-            </table>
+            </table> */}
 
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="id">ID:</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="id"
-                        name="id"
-                        value={nuevoUsuario.id}
-                        onChange={handleInputChange}
-                    />
-                </div>
                 <div className="form-group">
                     <label htmlFor="nombre">Nombre:</label>
                     <input
@@ -95,7 +100,8 @@ export const ListUsuarios = () => {
                         onChange={handleInputChange}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Agregar Usuario</button>
+                {error && <div className="alert alert-danger">{error}</div>}
+                <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Subir</button>
             </form>
         </div>
     );
