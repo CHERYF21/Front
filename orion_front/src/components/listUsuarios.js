@@ -1,17 +1,19 @@
-// ListUsuarios.js
+// Como hacer un formulario con Spring boot BIEN GRACIAS ESTRADA
+
 import React, { useEffect, useState } from "react";
-import usuariosService from "../services/usuariosService";
+import { crearUsuario, guardarUsuario } from "../services/usuariosService";
+
 
 export const ListUsuarios = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', email: '', password: '' });
-    const [error, setError] = useState(String);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await usuariosService.getAllUsuarios();
-                setUsuarios(response.data);
+                const response = await guardarUsuario();
+                console.log(response);
             } catch (error) {
                 console.log(error);
                 setError("Error al obtener usuarios. Por favor, inténtalo de nuevo más tarde.");
@@ -35,10 +37,13 @@ export const ListUsuarios = () => {
         }
 
         try {
-            await usuariosService.addUsuario(nuevoUsuario);
-            setUsuarios([...usuarios, nuevoUsuario]);
+            // Agregar el nuevo usuario al servidor
+            const response = await crearUsuario(nuevoUsuario);
+            
+            // Agregar el nuevo usuario al estado local
+            // setUsuarios([...usuarios, response.data]);
             setNuevoUsuario({ nombre: '', email: '', password: '' });
-            setError(String);
+            setError('');
         } catch (error) {
             setError(error.message);
         }
@@ -46,26 +51,6 @@ export const ListUsuarios = () => {
 
     return (
         <div className="container">
-            {/* <h2>Lista</h2>
-            <table className="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {usuarios.map(usuario => (
-                        <tr key={usuario.id}>
-                            <td>{usuario.nombre}</td>
-                            <td>{usuario.email}</td>
-                            <td>{usuario.password}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table> */}
-
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="nombre">Nombre:</label>
@@ -101,8 +86,30 @@ export const ListUsuarios = () => {
                     />
                 </div>
                 {error && <div className="alert alert-danger">{error}</div>}
-                <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Subir</button>
+                <button type="submit" className="btn btn-primary">Subir</button>
             </form>
         </div>
     );
 };
+
+
+
+   {/* <h2>Lista</h2>
+            <table className="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {usuarios.map(usuario => (
+                        <tr key={usuario.id}>
+                            <td>{usuario.nombre}</td>
+                            <td>{usuario.email}</td>
+                            <td>{usuario.password}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table> */}
