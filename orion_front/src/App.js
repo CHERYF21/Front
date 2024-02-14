@@ -5,7 +5,8 @@ import { ListUsuarios } from './components/listUsuarios';
 function App() {
   return (
     <div>
-      <ListUsuarios></ListUsuarios>
+     <ListUsuarios></ListUsuarios>
+     
     </div>
   );
 }
