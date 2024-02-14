@@ -1,11 +1,15 @@
 // ListUsuarios.js
 import React, { useEffect, useState } from "react";
 import usuariosService from "../services/usuariosService";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle, faFacebookF } from '@fortawesome/free-brands-svg-icons';
+import "./listUsuarios.css"
 
 export const ListUsuarios = () => {
     const [usuarios, setUsuarios] = useState([]);
     const [nuevoUsuario, setNuevoUsuario] = useState({ nombre: '', email: '', password: '' });
     const [error, setError] = useState(String);
+    const [isSignUp, setIsSignUp] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,67 +46,65 @@ export const ListUsuarios = () => {
         } catch (error) {
             setError(error.message);
         }
+
+    };
+        const handleToggle = () => {
+            setIsSignUp(!isSignUp); 
+        
     };
 
     return (
-        <div className="container">
-            {/* <h2>Lista</h2>
-            <table className="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {usuarios.map(usuario => (
-                        <tr key={usuario.id}>
-                            <td>{usuario.nombre}</td>
-                            <td>{usuario.email}</td>
-                            <td>{usuario.password}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table> */}
-
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="nombre">Nombre:</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="nombre"
-                        name="nombre"
-                        value={nuevoUsuario.nombre}
-                        onChange={handleInputChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        name="email"
-                        value={nuevoUsuario.email}
-                        onChange={handleInputChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        id="password"
-                        name="password"
-                        value={nuevoUsuario.password}
-                        onChange={handleInputChange}
-                    />
-                </div>
-                {error && <div className="alert alert-danger">{error}</div>}
-                <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Subir</button>
-            </form>
+        <div className={`container ${isSignUp ? 'active' : ''}`}>
+        <div className="form-container sign-up">
+          <form>
+            <h1>Crear una Cuenta</h1>
+            <div className="social-icons">
+              <a href="#" className="icon"><FontAwesomeIcon icon={faGoogle} /></a>
+              <a href="#" className="icon"><FontAwesomeIcon icon={faFacebookF} /></a>
+            </div>
+            <span>Si aún no tienes una cuenta, regístrate</span>
+            <input type="text" placeholder="Nombre" />
+            <input type="number" placeholder="Celular" />
+            <input type="email" placeholder="Email" />
+            <input type="text" placeholder="Dirección" />
+            <input type="password" placeholder="Contraseña" />
+            <input type="password" placeholder="Confirmacion de contraseña" />
+            <button type="submit" onClick={handleSubmit} class="animated-button">Regístrate ahora</button>
+          </form>
         </div>
+        <div className="form-container sign-in">
+          <form>
+            <h1>Iniciar Sesión</h1>
+            <div className="social-icons">
+              <a href="#" className="icon"><FontAwesomeIcon icon={faGoogle} /></a>
+              <a href="#" className="icon"><FontAwesomeIcon icon={faFacebookF} /></a>
+            </div>
+            <span>Ingrese sus datos personales para utilizar todas las funciones del sitio web.</span>
+            <input type="text" placeholder="Nombre" value={nuevoUsuario.nombre} onChange={handleInputChange}/>
+            <input type="email" placeholder="Email" value={nuevoUsuario.email} onChange={handleInputChange}/>
+            <input type="password" placeholder="Contraseña" value={nuevoUsuario.password} onChange={handleInputChange}/>
+            <a href="#">¿Olvidaste tu contraseña?</a>
+            {error && <div className="alert alert-danger">{error}</div>}
+            <button type="submit" onClick={handleSubmit} class="animated-button">Iniciar Sesión</button>
+          </form>
+        </div>
+        <div className="toggle-container">
+          <div className="toggle">
+            <div className="toggle-panel toggle-left">
+              <h1>Bienvenidos a Orion Dreams!</h1>
+              <p>Si ya estás registrado haz clic en el siguiente botón</p>
+              <button className="hidden" onClick={handleToggle}>Iniciar Sesión</button>
+            </div>
+            <div className="toggle-panel toggle-right">
+              <h1>Hola Amig@!</h1>
+              <p>Regístrese con sus datos personales para utilizar todas las funciones del sitio</p>
+              <button className="hidden" onClick={handleToggle}>Registrarse</button>
+            </div>
+          </div>
+        </div> 
+      </div>
+     
     );
-};
+}
+
+export default ListUsuarios;
